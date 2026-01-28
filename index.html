@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistem Pencarian Tempat Wisata Indonesia</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <nav class="navbar">
+        <div class="logo">
+          <i class="fas fa-map-marked-alt"></i>
+          <span>WisataID</span>
+        </div>
+        <ul class="nav-links">
+          <li><a href="#home" class="active">Beranda</a></li>
+          <li><a href="#search">Pencarian</a></li>
+          <li><a href="#algorithm">Algoritma</a></li>
+          <li><a href="#about">Tentang</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <h1>Jelajahi Keindahan <span>Indonesia</span></h1>
+        <p>Sistem Pencarian Tempat Wisata dengan Algoritma String Matching</p>
+        <a href="#search" class="btn-primary">Mulai Pencarian</a>
+      </div>
+      <div class="hero-overlay"></div>
+    </section>
+
+    <!-- Search Section -->
+    <section id="search" class="search-section">
+      <div class="container">
+        <h2>Cari Tempat Wisata</h2>
+        <p class="section-desc">
+          Temukan destinasi wisata impianmu di seluruh Indonesia
+        </p>
+
+        <!-- Search Box -->
+        <div class="search-box">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Masukkan nama tempat wisata..."
+            />
+            <button id="clearBtn" class="clear-btn" style="display: none">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <!-- Algorithm Selection -->
+          <div class="algorithm-selection">
+            <label
+              ><i class="fas fa-microchip"></i> Pilih Algoritma String
+              Matching:</label
+            >
+            <div class="algorithm-options">
+              <button
+                type="button"
+                class="algo-btn active"
+                data-algorithm="kmp"
+              >
+                <div class="algo-btn-icon">
+                  <i class="fas fa-bolt"></i>
+                </div>
+                <div class="algo-btn-content">
+                  <span class="algo-btn-name">KMP</span>
+                  <span class="algo-btn-desc">Knuth-Morris-Pratt</span>
+                </div>
+                <div class="algo-btn-badge">O(n+m)</div>
+              </button>
+              <button
+                type="button"
+                class="algo-btn"
+                data-algorithm="boyermoore"
+              >
+                <div class="algo-btn-icon">
+                  <i class="fas fa-rocket"></i>
+                </div>
+                <div class="algo-btn-content">
+                  <span class="algo-btn-name">Boyer-Moore</span>
+                  <span class="algo-btn-desc">Bad Character Rule</span>
+                </div>
+                <div class="algo-btn-badge">O(n/m)</div>
+              </button>
+              <button
+                type="button"
+                class="algo-btn"
+                data-algorithm="bruteforce"
+              >
+                <div class="algo-btn-icon">
+                  <i class="fas fa-hammer"></i>
+                </div>
+                <div class="algo-btn-content">
+                  <span class="algo-btn-name">Brute Force</span>
+                  <span class="algo-btn-desc">Naive Algorithm</span>
+                </div>
+                <div class="algo-btn-badge">O(nm)</div>
+              </button>
+            </div>
+            <input
+              type="hidden"
+              name="algorithm"
+              id="selectedAlgorithm"
+              value="kmp"
+            />
+          </div>
+
+          <!-- Filter Options -->
+          <div class="filter-options">
+            <div class="filter-group">
+              <label for="categoryFilter">Kategori:</label>
+              <select id="categoryFilter">
+                <option value="">Semua Kategori</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="cityFilter">Kota:</label>
+              <select id="cityFilter">
+                <option value="">Semua Kota</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="ratingFilter">Rating Minimal:</label>
+              <select id="ratingFilter">
+                <option value="">Semua Rating</option>
+                <option value="4.5">4.5+</option>
+                <option value="4.0">4.0+</option>
+                <option value="3.5">3.5+</option>
+                <option value="3.0">3.0+</option>
+              </select>
+            </div>
+            <button id="searchBtn" class="btn-search">
+              <i class="fas fa-search"></i> Cari
+            </button>
+          </div>
+        </div>
+
+        <!-- Search Statistics -->
+        <div id="searchStats" class="search-stats" style="display: none">
+          <div class="stat-item">
+            <i class="fas fa-clock"></i>
+            <span>Waktu Eksekusi: <strong id="execTime">0</strong> ms</span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-search-location"></i>
+            <span>Hasil Ditemukan: <strong id="resultCount">0</strong></span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-cogs"></i>
+            <span>Algoritma: <strong id="usedAlgorithm">-</strong></span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Perbandingan: <strong id="comparisonCount">0</strong></span>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="results-container">
+          <!-- Results will be displayed here -->
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading" style="display: none">
+          <div class="spinner"></div>
+          <p>Mencari...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Algorithm Section -->
+    <section id="algorithm" class="algorithm-section">
+      <div class="container">
+        <h2>Algoritma String Matching</h2>
+        <p class="section-desc">
+          Perbandingan algoritma yang digunakan dalam sistem pencarian
+        </p>
+
+        <div class="algorithm-cards">
+          <!-- KMP Algorithm -->
+          <div class="algo-card">
+            <div class="algo-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <h3>KMP (Knuth-Morris-Pratt)</h3>
+            <p>
+              Algoritma yang menggunakan informasi dari pattern untuk
+              menghindari perbandingan ulang yang tidak perlu.
+            </p>
+            <ul class="algo-features">
+              <li><i class="fas fa-check"></i> Kompleksitas: O(n + m)</li>
+              <li><i class="fas fa-check"></i> Preprocessing pattern</li>
+              <li><i class="fas fa-check"></i> Tidak mundur pada teks</li>
+            </ul>
+            <div class="algo-complexity">
+              <span class="badge best">Best Case: O(n)</span>
+              <span class="badge average">Worst Case: O(n + m)</span>
+            </div>
+          </div>
+
+          <!-- Boyer-Moore Algorithm -->
+          <div class="algo-card">
+            <div class="algo-icon">
+              <i class="fas fa-rocket"></i>
+            </div>
+            <h3>Boyer-Moore</h3>
+            <p>
+              Algoritma yang memulai pencocokan dari kanan ke kiri dan
+              menggunakan dua aturan: bad character dan good suffix.
+            </p>
+            <ul class="algo-features">
+              <li><i class="fas fa-check"></i> Kompleksitas: O(n/m) - O(nm)</li>
+              <li><i class="fas fa-check"></i> Cocok untuk pattern panjang</li>
+              <li><i class="fas fa-check"></i> Skip karakter efisien</li>
+            </ul>
+            <div class="algo-complexity">
+              <span class="badge best">Best Case: O(n/m)</span>
+              <span class="badge average">Worst Case: O(nm)</span>
+            </div>
+          </div>
+
+          <!-- Brute Force Algorithm -->
+          <div class="algo-card">
+            <div class="algo-icon">
+              <i class="fas fa-hammer"></i>
+            </div>
+            <h3>Brute Force</h3>
+            <p>
+              Algoritma sederhana yang membandingkan pattern dengan setiap
+              posisi pada teks secara berurutan.
+            </p>
+            <ul class="algo-features">
+              <li><i class="fas fa-check"></i> Kompleksitas: O(nm)</li>
+              <li><i class="fas fa-check"></i> Mudah diimplementasi</li>
+              <li><i class="fas fa-check"></i> Tidak perlu preprocessing</li>
+            </ul>
+            <div class="algo-complexity">
+              <span class="badge best">Best Case: O(n)</span>
+              <span class="badge average">Worst Case: O(nm)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Algorithm Comparison Chart -->
+        <div class="comparison-section">
+          <h3>Perbandingan Performa Algoritma</h3>
+          <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+      <div class="container">
+        <h2>Tentang Sistem</h2>
+        <div class="about-content">
+          <div class="about-text">
+            <h3>
+              Implementasi Algoritma String Matching untuk Sistem Pencarian
+              Tempat Wisata di Indonesia Berbasis Web
+            </h3>
+            <p>
+              Sistem ini merupakan implementasi dari beberapa algoritma string
+              matching yang digunakan untuk mencari tempat wisata di Indonesia.
+              Dataset yang digunakan adalah "Tourism with ID & Ratings" dari
+              Kaggle.
+            </p>
+            <div class="features-list">
+              <div class="feature-item">
+                <i class="fas fa-database"></i>
+                <div>
+                  <h4>Dataset Lengkap</h4>
+                  <p>
+                    Berisi data tempat wisata di Indonesia dengan informasi
+                    nama, kota, kategori, deskripsi, dan rating.
+                  </p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <i class="fas fa-code"></i>
+                <div>
+                  <h4>3 Algoritma String Matching</h4>
+                  <p>
+                    KMP, Boyer-Moore, dan Brute Force untuk perbandingan
+                    performa pencarian.
+                  </p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <i class="fas fa-chart-bar"></i>
+                <div>
+                  <h4>Analisis Performa</h4>
+                  <p>
+                    Menampilkan waktu eksekusi dan jumlah perbandingan dari
+                    setiap algoritma.
+                  </p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <i class="fas fa-filter"></i>
+                <div>
+                  <h4>Filter Pencarian</h4>
+                  <p>
+                    Filter berdasarkan kategori, kota, dan rating untuk hasil
+                    yang lebih spesifik.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="about-image">
+            <img
+              src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=600"
+              alt="Indonesia Tourism"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <div class="logo">
+              <i class="fas fa-map-marked-alt"></i>
+              <span>WisataID</span>
+            </div>
+            <p>
+              Sistem Pencarian Tempat Wisata Indonesia dengan Algoritma String
+              Matching
+            </p>
+          </div>
+          <div class="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="#home">Beranda</a></li>
+              <li><a href="#search">Pencarian</a></li>
+              <li><a href="#algorithm">Algoritma</a></li>
+              <li><a href="#about">Tentang</a></li>
+            </ul>
+          </div>
+          <div class="footer-info">
+            <h4>Informasi</h4>
+            <p><i class="fas fa-graduation-cap"></i> Tugas Implementasi</p>
+            <p><i class="fas fa-code"></i> Algoritma String Matching</p>
+            <p><i class="fas fa-database"></i> Dataset Kaggle</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 WisataID - Sistem Pencarian Tempat Wisata Indonesia</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal for Place Detail -->
+    <div id="placeModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div id="modalBody">
+          <!-- Place details will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/bruteforce.js"></script>
+    <script src="js/kmp.js"></script>
+    <script src="js/boyermoore.js"></script>
+    <script src="js/algorithms.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
